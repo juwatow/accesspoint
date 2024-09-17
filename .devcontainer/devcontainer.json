@@ -1,0 +1,31 @@
+{
+  "name": "Auth Microservice Dev",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:0-18",
+  "features": {
+    "docker-in-docker": "latest"
+  },
+  "postCreateCommand": "bun install || curl -fsSL https://bun.sh/install | bash && source /home/vscode/.bashrc && bun install",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "forwardPorts": [3000, 5432],
+  "portsAttributes": {
+    "3000": {
+      "label": "Bun Server"
+    },
+    "5432": {
+      "label": "PostgreSQL"
+    }
+  },
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ]
+}
