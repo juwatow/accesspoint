@@ -2,6 +2,7 @@ import { db } from '../db';
 import { users, User } from '../models/user';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { eq } from 'drizzle-orm';
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -13,10 +14,18 @@ export const registerUser = async (email: string, password: string) => {
 };
 
 export const loginUser = async (email: string, password: string) => {
-  const user = await db.select().from(users).where(users.email.eq(email)).first();
+  // Correct Drizzle ORM query to find the user by email using the eq() function
+  const user = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1)
+    .then(rows => rows[0]);
+
   if (!user || !(await bcrypt.compare(password, user.password))) {
     throw new Error('Invalid email or password');
   }
+
   return generateToken(user);
 };
 
